@@ -6,47 +6,32 @@ MEM = 1024
 CPU = 1
 
 MASTER_NAME="smakniS"
-WORKER_NAME="smakniSW"
 
 MASTER_IP = "192.168.42.110"
-WORKER_IP = "192.168.42.111"
 
 setup_master = <<-SHELL
   echo "** Setup Master **"
   sudo -i
   export K3S_NODE_NAME=$MASTER_NAME
   export K3S_KUBECONFIG_MODE=644
-  export INSTALL_K3S_EXEC="server --bind-address=#{MASTER_IP} --node-ip=#{MASTER_IP} --flannel-iface=eth1"
+  export INSTALL_K3S_EXEC="server --bind-address=#{MASTER_IP} --node-ip=#{MASTER_IP}  --flannel-iface=eth1"
   echo "** Install K3S **"
   curl -sfL https://get.k3s.io | sh -
-  echo "** Waiting for token **"
+  echo "** Waiting install **"
   sleep 20
-  cp /var/lib/rancher/k3s/server/token /vagrant_shared
-  cp /etc/rancher/k3s/k3s.yaml /vagrant_shared
   echo "** Install net tools **"
   sudo yum -y install net-tools
+  echo "** Install cluster **"
+  /usr/local/bin/kubectl apply -f /vagrant/kube
   echo "** Setup Master complete **"
 SHELL
-
-setup_worker = <<-SHELL
-  echo "** Setup Worker **"
-  sudo -i
-  export K3S_NODE_NAME=$WORKER_NAME
-  export K3S_TOKEN_FILE=/vagrant_shared/token
-  export INSTALL_K3S_EXEC="agent --server=https://#{MASTER_IP}:6443 --node-ip=#{WORKER_IP} --flannel-iface=eth1"
-  echo "** Install K3S **"
-  curl -sfL https://get.k3s.io | sh -
-  echo "** Install net tools **"
-  sudo yum -y install net-tools
-  echo "** Setup Worker complete **"
-SHELL
-
 
 Vagrant.configure("2") do |config|
   config.vm.box = IMAGE_NAME
   config.vm.box_check_update = false
   config.vbguest.installer_options = { allow_kernel_upgrade: true } # VirtualBox Guest Additions: to enable vboxsf (synched folder)
-  config.vm.synced_folder "shared", "/vagrant_shared"
+  config.vm.synced_folder ".", "/vagrant"
+  config.vm.network "forwarded_port", guest: 80, host: 80
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = MEM
@@ -60,14 +45,5 @@ Vagrant.configure("2") do |config|
 			vb.name = MASTER_NAME
 		end
     master.vm.provision "shell", inline: setup_master
-  end
-
-  config.vm.define WORKER_NAME do |worker|
-    worker.vm.hostname = WORKER_NAME
-    worker.vm.network "private_network", ip: WORKER_IP
-    worker.vm.provider "virtualbox" do |vb|
-			vb.name = WORKER_NAME
-		end
-    worker.vm.provision "shell", inline: setup_worker
   end
 end
