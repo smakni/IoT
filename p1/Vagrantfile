@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-IMAGE_NAME = "centos/7"
+IMAGE_NAME = "centos/stream8"
 MEM = 1024
 CPU = 1
 
@@ -25,7 +25,7 @@ setup_master = <<-SHELL
   cp /etc/rancher/k3s/k3s.yaml /vagrant_shared
   echo "** Install net tools **"
   sudo yum -y install net-tools
-  echo "** Install Master complete **"
+  echo "** Setup Master complete **"
 SHELL
 
 setup_worker = <<-SHELL
@@ -38,13 +38,14 @@ setup_worker = <<-SHELL
   curl -sfL https://get.k3s.io | sh -
   echo "** Install net tools **"
   sudo yum -y install net-tools
-  echo "** Install Worker complete **"
+  echo "** Setup Worker complete **"
 SHELL
 
 
 Vagrant.configure("2") do |config|
   config.vm.box = IMAGE_NAME
-  config.vbguest.installer_options = { allow_kernel_upgrade: true } # VirtualBox Guest Additions: to enable vboxsf on centos7 (tools like shared folder)
+  config.vm.box_check_update = false
+  config.vbguest.installer_options = { allow_kernel_upgrade: true } # VirtualBox Guest Additions: to enable vboxsf (synched folder)
   config.vm.synced_folder "shared", "/vagrant_shared"
 
   config.vm.provider "virtualbox" do |vb|
