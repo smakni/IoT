@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  labels:
+    app: playground
+  name: playground-app
+spec:
+  project: development
+  source:
+    repoURL: 'https://github.com/smakni/argocd-synch.git'
+    targetRevision: HEAD
+    path: app
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true

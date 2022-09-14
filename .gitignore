@@ -1,3 +1,4 @@
 .vagrant
 k3s.yaml
 token
+.DS_STORE
