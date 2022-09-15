@@ -22,7 +22,7 @@ setup_master = <<-SHELL
   echo "** Install net tools **"
   sudo yum -y install net-tools
   echo "** Install cluster **"
-  /usr/local/bin/kubectl apply -f /vagrant/kube
+  /usr/local/bin/kubectl apply -f /vagrant/confs
   echo "** Setup Master complete **"
 SHELL
 

@@ -2,7 +2,7 @@
 
 echo "** Setup Dev **"
 
-echo "** kubectl create namespace argocd **"
+echo "** kubectl create namespace dev **"
 kubectl create namespace dev
 
 echo "** kubectl apply argocd confs **"
