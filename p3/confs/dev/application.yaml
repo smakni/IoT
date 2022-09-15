@@ -7,7 +7,7 @@ metadata:
 spec:
   project: development
   source:
-    repoURL: 'https://github.com/smakni/argocd-synch.git'
+    repoURL: 'https://github.com/smakni/smakni-argocd-synch.git'
     targetRevision: HEAD
     path: app
     directory:
