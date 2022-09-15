@@ -1,5 +1,7 @@
 # P1
 
+The master node does not run any containers, it just handles and manages the cluster. The nodes that actually run the containers are the worker nodes. We’re going to configure two of them.
+
 ## Links
 
 https://www.vagrantup.com/docs
@@ -38,3 +40,7 @@ Check config from host with k3s.yaml
 Check Ingress
 	
 	kubectl get ingress
+
+Check logs
+
+	journalctl -u k3s
