@@ -1,9 +1,7 @@
 #!/bin/bash
 
-kubectl config set-context --current --namespace=dev 
+podName=$(kubectl -n dev get pods --no-headers -o custom-columns=":metadata.name")
 
-kubectl config  current-context                      
+echo "** Forwarding pod $podName to http://localhost:8888 **"
 
-podName=$(kubectl get pods --no-headers -o custom-columns=":metadata.name")
-
-kubectl port-forward $podName 8888:8888  
+kubectl -n dev port-forward $podName 8888:8888

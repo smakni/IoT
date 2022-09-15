@@ -11,11 +11,13 @@ sleep 20
 
 echo "** kubectl apply argocd confs **"
 kubectl apply -n argocd -f ../confs/argocd
-sleep 20
 
-echo "Argocd setup complete it should be available in a moment at http://localhost:8080/argocd"
+echo "** kubectl wait for availability **"
+kubectl rollout status -n argocd deploy/argocd-server
+
+echo "Argocd setup complete it should be available at http://localhost:8080/argocd"
 
 password=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 
-echo "Login: Admin | password: $password"
+echo "login: admin | password: $password"
 
